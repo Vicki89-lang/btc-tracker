@@ -1,22 +1,27 @@
+import requests
 from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Route to serve the dashboard
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Map your ticker symbols to CoinGecko IDs
+COIN_MAP = {
+    "bitcoin": "bitcoin",
+    "ethereum": "ethereum",
+    "solana": "solana",
+    "doge": "dogecoin"
+}
 
-# API route for chart data
 @app.route('/api/data/<symbol>')
 def get_data(symbol):
-    # This is dummy data. Later, replace this with requests to CoinGecko API
-    data = {
-        "bitcoin": {"dates": ["Mon", "Tue", "Wed", "Thu", "Fri"], "prices": [60000, 62000, 61000, 63000, 65000]},
-        "ethereum": {"dates": ["Mon", "Tue", "Wed", "Thu", "Fri"], "prices": [3000, 3100, 3050, 3200, 3300]}
-    }
-    return jsonify(data.get(symbol, {"dates": [], "prices": []}))
+    coin_id = COIN_MAP.get(symbol.lower())
+    if not coin_id:
+        return jsonify({"error": "Coin not found"}), 404
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Fetch live price from CoinGecko
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
+    response = requests.get(url).json()
+    
+    # Return current price to the chart
+    price = response.get(coin_id, {}).get('usd', 0)
+    return jsonify({"dates": ["Now"], "prices": [price]})
 
