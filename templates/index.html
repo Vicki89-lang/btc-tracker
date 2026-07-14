@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Crypto Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-white p-6">
+    <div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-xl shadow-2xl">
+        <h1 class="text-2xl font-bold mb-4">Market Dashboard</h1>
+        
+        <select id="symbolSelect" class="bg-gray-700 p-2 rounded mb-6 text-white">
+            <option value="BTC">Bitcoin (BTC)</option>
+            <option value="ETH">Ethereum (ETH)</option>
+        </select>
+
+        <div class="h-64">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let myChart;
+        async function updateChart() {
+            const symbol = document.getElementById('symbolSelect').value;
+            const response = await fetch(`/api/data/${symbol}`);
+            const data = await response.json();
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.dates, // Ensure your scraper returns this
+                    datasets: [{ label: symbol, data: data.prices, borderColor: '#f7931a' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        document.getElementById('symbolSelect').addEventListener('change', updateChart);
+        updateChart(); // Initial load
+    </script>
+</body>
+</html>
+

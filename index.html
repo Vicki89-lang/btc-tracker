@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song Reward System</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 12px 24px; font-size: 16px; cursor: pointer; background: #17a2b8; color: white; border: none; border-radius: 5px; }
+        #display-box { margin-top: 25px; font-size: 20px; font-weight: bold; color: #333; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>TREBZ.COM</h1>
+    <img src="sample_0_1.webp" alt="My Awesome Game Logo">
+    <img src="https://via.placeholder.com/150" alt="sample_0_1.webp" width="10" height="10">
+
+
+    <p>Test Lines 1-5: The Boolean Gatekeeper</p>
+
+    <button onclick="claimSong()">Trigger Song Bonus</button>
+
+    <div id="display-box">Click the button to try the gatekeeper...</div>
+
+    <script>
+        async function claimSong() {
+            try {
+                // Call our updated Python route
+                let response = await fetch('http://localhost:5000/sing-song');
+                let data = await response.json();
+                
+                // Show the server's custom response on the screen
+                document.getElementById('display-box').innerText = data.server_response;
+            } catch (error) {
+                document.getElementById('display-box').innerText = "Can't reach the server.";
+            }
+        }
+    </script>
+
+</body>
+</html>
+
