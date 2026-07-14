@@ -1,26 +1,22 @@
 from flask import Flask, render_template, jsonify
-# Assuming your logic is in scraper.py
-from scraper import get_ohlc_data 
 
 app = Flask(__name__)
 
+# Route to serve the dashboard
 @app.route('/')
 def index():
-    # Serves your UI
     return render_template('index.html')
 
+# API route for chart data
 @app.route('/api/data/<symbol>')
-def api_data(symbol):
-    # API endpoint for your chart
-    try:
-        data = get_ohlc_data(symbol.upper())
-        if not data:
-            return jsonify({"error": "No data found"}), 404
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+def get_data(symbol):
+    # This is dummy data. Later, replace this with requests to CoinGecko API
+    data = {
+        "bitcoin": {"dates": ["Mon", "Tue", "Wed", "Thu", "Fri"], "prices": [60000, 62000, 61000, 63000, 65000]},
+        "ethereum": {"dates": ["Mon", "Tue", "Wed", "Thu", "Fri"], "prices": [3000, 3100, 3050, 3200, 3300]}
+    }
+    return jsonify(data.get(symbol, {"dates": [], "prices": []}))
 
 if __name__ == '__main__':
-    # Use 0.0.0.0 so it's accessible over local network
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
 

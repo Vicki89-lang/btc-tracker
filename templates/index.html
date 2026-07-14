@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Crypto Tracker</title>
+    <title>Crypto Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-900 text-white p-6">
-    <div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-xl shadow-2xl">
-        <h1 class="text-2xl font-bold mb-4">Market Dashboard</h1>
-        
-        <select id="symbolSelect" class="bg-gray-700 p-2 rounded mb-6 text-white">
-            <option value="BTC">Bitcoin (BTC)</option>
-            <option value="ETH">Ethereum (ETH)</option>
-        </select>
+<body class="bg-gray-900 text-white p-4">
 
-        <div class="h-64">
-            <canvas id="chart"></canvas>
+    <!-- Header / Selector -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold">Market Dashboard</h1>
+        <select id="symbolSelect" class="bg-gray-800 border border-gray-700 p-2 rounded mt-2">
+            <option value="bitcoin">Bitcoin (BTC)</option>
+            <option value="ethereum">Ethereum (ETH)</option>
+        </select>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Chart Section -->
+        <div class="md:col-span-2 bg-gray-800 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4">Price Action</h2>
+            <div class="relative h-64 w-full">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+
+        <!-- News/Stats Section -->
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold mb-4">Latest News</h2>
+            <p class="text-gray-400 text-sm">Market volatility remains high due to global economic shifts...</p>
         </div>
     </div>
 
@@ -29,21 +43,24 @@
             const data = await response.json();
 
             const ctx = document.getElementById('chart').getContext('2d');
-            
             if (myChart) myChart.destroy();
-            
+
             myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.dates, // Ensure your scraper returns this
-                    datasets: [{ label: symbol, data: data.prices, borderColor: '#f7931a' }]
+                    labels: data.dates,
+                    datasets: [{
+                        label: 'Price (USD)',
+                        data: data.prices,
+                        borderColor: '#10B981', // Green color
+                        tension: 0.3
+                    }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
-
         document.getElementById('symbolSelect').addEventListener('change', updateChart);
-        updateChart(); // Initial load
+        updateChart(); // Load on start
     </script>
 </body>
 </html>
